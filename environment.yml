@@ -1,0 +1,12 @@
+# To use:
+#
+#   $ conda env create -f environment.yml  # `mamba` works too for this command
+#   $ conda activate mssa-dev
+
+name: mssa-dev
+channels:
+  - defaults
+dependencies:
+  - xarray
+  - numpy
+  - scipy
