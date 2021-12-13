@@ -34,18 +34,19 @@ def moving_mean(a, nave, dim, opt=0):
         Size of window.
     dim : str, required
         The dimension across which the moving mean has to be computed.
-    opt : [-1, 0]
-        -1 utilizes circular conditions.
+    opt : [-1, 0, 1]
+        -1 utilizes circular conditions for edge handling.
         0 (default) handles edge cases by replacing them with NaNs.
+        1 utilizes symmetric (reflective) conditions for edge handling.
 
     Notes
     -----
-    For opt=-1, we backcast and forecast the timeseries to compute the moving
+    For opt=-1, 1, we backcast and forecast the timeseries to compute the moving
     means for the edge cases.
     """
 
+    n = nave // 2
     if opt == -1:
-        n = nave // 2
         if nave % 2 == 1:
             temp = xr.concat((a[-n:], a, a[:n]), dim=dim)
             return temp.rolling(dim={dim:nave}, center=True).mean().dropna(dim)
@@ -54,3 +55,12 @@ def moving_mean(a, nave, dim, opt=0):
             return temp.rolling(dim={dim:nave}, center=True).mean().dropna(dim)
     elif opt == 0:
         return a.rolling(time=nave, center=True).mean()
+    elif opt == 1:
+        if nave % 2 == 1:
+            temp = xr.concat((np.flip(a[1:(n + 1)]), a, np.flip(a[-(n + 1):-1])),
+                                dim=dim)
+            return temp.rolling(dim={dim:nave}, center=True).mean().dropna(dim)
+        else:
+            temp = xr.concat((np.flip(a[1:n]), a, np.flip(a[-(n + 1):-1])),
+                                dim=dim)
+            return temp.rolling(dim={dim:nave}, center=True).mean().dropna(dim)
