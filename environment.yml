@@ -10,3 +10,4 @@ dependencies:
   - xarray
   - numpy
   - scipy
+  - scikit-learn
