@@ -6,8 +6,11 @@
 name: mssa-dev
 channels:
   - defaults
+  - conda-forge
 dependencies:
   - xarray
   - numpy
   - scipy
   - scikit-learn
+  - jupyterlab
+  - scalene
